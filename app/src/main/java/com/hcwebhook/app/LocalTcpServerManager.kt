@@ -193,7 +193,7 @@ object LocalHttpServerManager {
                         }
                         val days = queryParams["days"]?.toIntOrNull()?.takeIf { it > 0 }
                         val syncManager = SyncManager(context)
-                        val payloadResult = syncManager.getRealtimeJsonPayload(timeRangeDays = days)
+                        val payloadResult = syncManager.getRealtimeJsonPayload()
                         if (payloadResult.isSuccess) {
                             reply(200, payloadResult.getOrThrow())
                         } else {
@@ -268,19 +268,14 @@ object LocalHttpServerManager {
 
     private suspend fun handleSyncRequest(writer: BufferedWriter, context: Context, days: Int?): Int {
         val syncManager = SyncManager(context)
-        val result = syncManager.performSync(timeRangeDays = days, syncType = "api")
+        val result = syncManager.performSync(syncType = "api")
         return if (result.isSuccess) {
             val syncResult = result.getOrThrow()
             val body = when (syncResult) {
                 is SyncResult.NoData ->
                     """{"status":"ok","result":"no_data"}"""
-                is SyncResult.NoMatchingData ->
-                    """{"status":"ok","result":"no_matching_data"}"""
                 is SyncResult.Success -> {
-                    val counts = syncResult.syncCounts.entries.joinToString(",") { (type, count) ->
-                        """"${type.name.lowercase()}":$count"""
-                    }
-                    """{"status":"ok","result":"success","counts":{$counts}}"""
+                    """{"status":"ok","result":"success","app_count":${syncResult.appCount}}"""
                 }
             }
             writeHttpResponse(writer, 200, body)

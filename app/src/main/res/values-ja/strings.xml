@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HC Webhook</string>
+    <string name="app_name">US Webhook</string>
     <string name="onboarding_skip_dialog_title">イントロダクションをスキップしますか？</string>
     <string name="onboarding_skip_dialog_text">「設定」画面からいつでも再度表示できます。</string>
     <string name="onboarding_skip">スキップ</string>

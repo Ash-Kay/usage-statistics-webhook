@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HC Webhook</string>
+    <string name="app_name">US Webhook</string>
     <string name="onboarding_skip_dialog_title">跳过介绍？</string>
     <string name="onboarding_skip_dialog_text">您可以随时在“设置”页面再次查看。</string>
     <string name="onboarding_skip">跳过</string>

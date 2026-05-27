@@ -10,29 +10,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
-import androidx.compose.material.icons.automirrored.filled.ShowChart
-import androidx.compose.material.icons.filled.Air
-import androidx.compose.material.icons.filled.Accessibility
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.filled.Bedtime
-import androidx.compose.material.icons.filled.Bloodtype
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.DeviceThermostat
-import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Height
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MonitorHeart
-import androidx.compose.material.icons.filled.MonitorWeight
-import androidx.compose.material.icons.filled.NightsStay
-import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.filled.Straighten
-import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Webhook
-import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -46,7 +30,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.compose.material.icons.filled.Translate
 import com.hcwebhook.app.FlavorUtils
-import com.hcwebhook.app.HealthDataType
 import com.hcwebhook.app.R
 import kotlinx.coroutines.launch
 
@@ -145,7 +128,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
         ) { page ->
             when (page) {
                 0 -> WelcomePage()
-                1 -> DataTypesPage()
+                1 -> HowItWorksPage()
                 2 -> PrivacyPage()
                 3 -> ThankYouPage()
             }
@@ -171,139 +154,99 @@ private fun WelcomePage() {
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = stringResource(R.string.onboarding_welcome_title),
+            text = "Usage Statistics Webhook",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = stringResource(R.string.onboarding_welcome_subtitle),
+            text = "Track your daily screen time per app and sync it to your webhook endpoint automatically.",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(32.dp))
         FeatureRow(
-            icon = Icons.Filled.CheckCircle,
-            title = stringResource(R.string.onboarding_feature1_title),
-            description = stringResource(R.string.onboarding_feature1_desc)
+            icon = Icons.Filled.Timer,
+            title = "Screen Time Tracking",
+            description = "Monitors daily per-app usage via Android's UsageStatsManager"
         )
         Spacer(modifier = Modifier.height(16.dp))
         FeatureRow(
             icon = Icons.Filled.Webhook,
-            title = stringResource(R.string.onboarding_feature2_title),
-            description = stringResource(R.string.onboarding_feature2_desc)
+            title = "Webhook Sync",
+            description = "Pushes JSON payloads to n8n or any HTTP endpoint"
         )
         Spacer(modifier = Modifier.height(16.dp))
         FeatureRow(
             icon = Icons.Filled.Lock,
-            title = stringResource(R.string.onboarding_feature3_title),
-            description = stringResource(R.string.onboarding_feature3_desc)
+            title = "Privacy First",
+            description = "Data stays on your device until you choose to sync"
         )
     }
 }
 
 @Composable
-private fun DataTypesPage() {
+private fun HowItWorksPage() {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
-            .padding(bottom = 24.dp)
+            .padding(bottom = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
+        Icon(
+            imageVector = Icons.Filled.PhoneAndroid,
+            contentDescription = null,
+            modifier = Modifier.size(72.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = stringResource(R.string.onboarding_datatypes_title),
+            text = "How It Works",
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = stringResource(R.string.onboarding_datatypes_desc, HealthDataType.entries.size),
-            style = MaterialTheme.typography.bodyMedium,
+            text = "This app collects daily screen time data for each app on your device and formats it as a clean JSON payload.",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        val groups = mapOf(
-            stringResource(R.string.onboarding_group_activity) to listOf(
-                HealthDataType.STEPS,
-                HealthDataType.DISTANCE,
-                HealthDataType.ACTIVE_CALORIES,
-                HealthDataType.TOTAL_CALORIES,
-                HealthDataType.EXERCISE
-            ),
-            stringResource(R.string.onboarding_group_heart_vitals) to listOf(
-                HealthDataType.HEART_RATE,
-                HealthDataType.HEART_RATE_VARIABILITY,
-                HealthDataType.RESTING_HEART_RATE,
-                HealthDataType.BLOOD_PRESSURE,
-                HealthDataType.OXYGEN_SATURATION,
-                HealthDataType.RESPIRATORY_RATE,
-                HealthDataType.BODY_TEMPERATURE,
-                HealthDataType.SKIN_TEMPERATURE,
-                HealthDataType.BLOOD_GLUCOSE
-            ),
-            stringResource(R.string.onboarding_group_sleep) to listOf(
-                HealthDataType.SLEEP
-            ),
-            stringResource(R.string.onboarding_group_body_composition) to listOf(
-                HealthDataType.WEIGHT,
-                HealthDataType.HEIGHT,
-                HealthDataType.BODY_FAT,
-                HealthDataType.LEAN_BODY_MASS,
-                HealthDataType.BONE_MASS,
-                HealthDataType.BASAL_METABOLIC_RATE,
-                HealthDataType.VO2_MAX
-            ),
-            stringResource(R.string.onboarding_group_nutrition) to listOf(
-                HealthDataType.NUTRITION,
-                HealthDataType.HYDRATION
-            )
+        val steps = listOf(
+            "Grant Usage Access permission in system settings",
+            "Configure your webhook URL(s)",
+            "Set your preferred sync schedule",
+            "Data syncs automatically in the background"
         )
 
-        groups.forEach { (groupName, types) ->
-            Text(
-                text = groupName,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            types.forEach { type ->
-                Row(
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Icon(
-                        imageVector = iconForDataType(type),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp).padding(top = 2.dp)
-                    )
-                    Column {
-                        Text(
-                            text = stringResource(id = type.nameResId),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Text(
-                            text = stringResource(id = type.rationaleResId),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+        steps.forEachIndexed { index, step ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "${index + 1}.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = step,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
         }
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -332,7 +275,7 @@ private fun PrivacyPage() {
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = stringResource(R.string.onboarding_privacy_subtitle),
+            text = "Your data is processed locally and only sent to webhook URLs you configure.",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -340,11 +283,11 @@ private fun PrivacyPage() {
         Spacer(modifier = Modifier.height(32.dp))
 
         val points = listOf(
-            stringResource(R.string.onboarding_privacy_p1),
-            stringResource(R.string.onboarding_privacy_p2),
-            stringResource(R.string.onboarding_privacy_p3),
-            stringResource(R.string.onboarding_privacy_p4),
-            stringResource(R.string.onboarding_privacy_p5)
+            "No data collection by the app developer",
+            "No third-party analytics or tracking",
+            "Open source — inspect the code yourself",
+            "Data only goes where YOU configure it",
+            "Fully offline capable"
         )
 
         points.forEach { point ->
@@ -367,47 +310,6 @@ private fun PrivacyPage() {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = stringResource(R.string.onboarding_privacy_footer),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-
-        if (FlavorUtils.isPlayStore) {
-            Spacer(modifier = Modifier.height(24.dp))
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Warning,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier.size(20.dp).padding(top = 2.dp)
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = stringResource(R.string.onboarding_privacy_warning_title),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onErrorContainer
-                        )
-                        Text(
-                            text = stringResource(R.string.onboarding_privacy_warning_desc),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onErrorContainer
-                        )
-                    }
-                }
             }
         }
     }
@@ -446,33 +348,6 @@ private fun ThankYouPage() {
     }
 }
 
-fun iconForDataType(type: HealthDataType): ImageVector = when (type) {
-    HealthDataType.STEPS               -> Icons.AutoMirrored.Filled.DirectionsWalk
-    HealthDataType.DISTANCE            -> Icons.Filled.Straighten
-    HealthDataType.ACTIVE_CALORIES     -> Icons.Filled.LocalFireDepartment
-    HealthDataType.TOTAL_CALORIES      -> Icons.Filled.Whatshot
-    HealthDataType.EXERCISE            -> Icons.Filled.FitnessCenter
-    HealthDataType.HEART_RATE          -> Icons.Filled.MonitorHeart
-    HealthDataType.HEART_RATE_VARIABILITY -> Icons.AutoMirrored.Filled.ShowChart
-    HealthDataType.RESTING_HEART_RATE  -> Icons.Filled.Favorite
-    HealthDataType.BLOOD_PRESSURE      -> Icons.Filled.Bloodtype
-    HealthDataType.BLOOD_GLUCOSE       -> Icons.Filled.Bloodtype
-    HealthDataType.OXYGEN_SATURATION   -> Icons.Filled.Air
-    HealthDataType.RESPIRATORY_RATE    -> Icons.Filled.Air
-    HealthDataType.BODY_TEMPERATURE    -> Icons.Filled.DeviceThermostat
-    HealthDataType.SKIN_TEMPERATURE    -> Icons.Filled.NightsStay
-    HealthDataType.SLEEP               -> Icons.Filled.Bedtime
-    HealthDataType.WEIGHT              -> Icons.Filled.MonitorWeight
-    HealthDataType.HEIGHT              -> Icons.Filled.Height
-    HealthDataType.BODY_FAT            -> Icons.Filled.MonitorWeight
-    HealthDataType.LEAN_BODY_MASS      -> Icons.Filled.FitnessCenter
-    HealthDataType.BONE_MASS           -> Icons.Filled.Accessibility
-    HealthDataType.BASAL_METABOLIC_RATE -> Icons.Filled.LocalFireDepartment
-    HealthDataType.VO2_MAX             -> Icons.Filled.Speed
-    HealthDataType.NUTRITION           -> Icons.Filled.Restaurant
-    HealthDataType.HYDRATION           -> Icons.Filled.WaterDrop
-}
-
 @Composable
 private fun FeatureRow(icon: ImageVector, title: String, description: String) {
     Row(
@@ -502,15 +377,15 @@ fun LanguageSelector() {
     val languages = listOf(
         "" to "System Default",
         "en" to "English",
-        "ta" to "தமிழ்", // Tamil
-        "fr" to "Français", // French
-        "de" to "Deutsch", // German
-        "es" to "Español", // Spanish
-        "pt" to "Português", // Portuguese
-        "zh" to "中文", // Chinese
-        "ja" to "日本語", // Japanese
-        "ko" to "한국어", // Korean
-        "it" to "Italiano" // Italian
+        "ta" to "தமிழ்",
+        "fr" to "Français",
+        "de" to "Deutsch",
+        "es" to "Español",
+        "pt" to "Português",
+        "zh" to "中文",
+        "ja" to "日本語",
+        "ko" to "한국어",
+        "it" to "Italiano"
     )
 
     Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {

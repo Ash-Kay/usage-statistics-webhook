@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HC Webhook</string>
+    <string name="app_name">US Webhook</string>
     <string name="onboarding_skip_dialog_title">¿Omitir introducción?</string>
     <string name="onboarding_skip_dialog_text">Puedes volver a verla en cualquier momento desde la pantalla de Configuración.</string>
     <string name="onboarding_skip">Omitir</string>

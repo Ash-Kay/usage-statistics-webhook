@@ -39,7 +39,7 @@ import org.json.JSONObject
 fun WebhooksScreen(onOpenNotificationsSettings: () -> Unit = {}) {
     val context = LocalContext.current
     val preferencesManager = remember { PreferencesManager(context) }
-    val globalEnabledTypes = remember { preferencesManager.getEnabledDataTypes().map { it.name }.toSet() }
+    val globalEnabledTypes = remember { preferencesManager.getEnabledDataTypes().map { it }.toSet() }
     var globalNotificationConfigs by remember { mutableStateOf(preferencesManager.getNotificationConfigs()) }
     val appVersion = remember {
         try { context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "unknown" }

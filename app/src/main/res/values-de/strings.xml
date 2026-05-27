@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HC Webhook</string>
+    <string name="app_name">US Webhook</string>
     <string name="onboarding_skip_dialog_title">Einführung überspringen?</string>
     <string name="onboarding_skip_dialog_text">Sie können sie jederzeit über den Einstellungsbildschirm wieder anzeigen.</string>
     <string name="onboarding_skip">Überspringen</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HC Webhook</string>
+    <string name="app_name">US Webhook</string>
     <string name="onboarding_skip_dialog_title">அறிமுகத்தைத் தவிர்க்கவா?</string>
     <string name="onboarding_skip_dialog_text">நீங்கள் எப்போது வேண்டுமானாலும் அமைப்புகள் திரையிலிருந்து மீண்டும் பார்க்க முடியும்.</string>
     <string name="onboarding_skip">தவிர்</string>

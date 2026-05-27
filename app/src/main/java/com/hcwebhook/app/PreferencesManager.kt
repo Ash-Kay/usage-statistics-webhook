@@ -110,19 +110,17 @@ class PreferencesManager(context: Context) {
     }
 
 
-    fun getEnabledDataTypes(): Set<HealthDataType> {
+    fun getEnabledDataTypes(): Set<String> {
         val typesString = prefs.getString(KEY_ENABLED_DATA_TYPES, "") ?: ""
         return if (typesString.isEmpty()) {
             emptySet()
         } else {
-            typesString.split(",").mapNotNull {
-                try { HealthDataType.valueOf(it) } catch (e: Exception) { null }
-            }.toSet()
+            typesString.split(",").filter { it.isNotBlank() }.toSet()
         }
     }
 
-    fun setEnabledDataTypes(types: Set<HealthDataType>) {
-        val typesString = types.joinToString(",") { it.name }
+    fun setEnabledDataTypes(types: Set<String>) {
+        val typesString = types.joinToString(",")
         prefs.edit().putString(KEY_ENABLED_DATA_TYPES, typesString).apply()
     }
 
@@ -134,13 +132,13 @@ class PreferencesManager(context: Context) {
         prefs.edit().putStringSet(KEY_KNOWN_GRANTED_PERMISSIONS, permissions).apply()
     }
 
-    fun getLastSyncTimestamp(type: HealthDataType): Long? {
-        val timestamp = prefs.getLong(KEY_LAST_SYNC_TS_PREFIX + type.name, -1)
+    fun getLastSyncTimestamp(type: String): Long? {
+        val timestamp = prefs.getLong(KEY_LAST_SYNC_TS_PREFIX + type, -1)
         return if (timestamp == -1L) null else timestamp
     }
 
-    fun setLastSyncTimestamp(type: HealthDataType, timestamp: Long) {
-        prefs.edit().putLong(KEY_LAST_SYNC_TS_PREFIX + type.name, timestamp).apply()
+    fun setLastSyncTimestamp(type: String, timestamp: Long) {
+        prefs.edit().putLong(KEY_LAST_SYNC_TS_PREFIX + type, timestamp).apply()
     }
 
     fun getWebhookLogs(): List<WebhookLog> {
@@ -359,7 +357,7 @@ class PreferencesManager(context: Context) {
         return SettingsExport(
             exportedAt = System.currentTimeMillis(),
             webhookConfigs = getWebhookConfigs(),
-            enabledDataTypes = getEnabledDataTypes().map { it.name },
+            enabledDataTypes = getEnabledDataTypes().toList(),
             syncMode = getSyncMode().name,
             syncIntervalMinutes = getSyncIntervalMinutes(),
             scheduledSyncs = getScheduledSyncs(),
@@ -375,10 +373,7 @@ class PreferencesManager(context: Context) {
     fun importSettings(export: SettingsExport) {
         setWebhookConfigs(export.webhookConfigs)
 
-        val dataTypes = export.enabledDataTypes.mapNotNull { name ->
-            try { HealthDataType.valueOf(name) } catch (e: Exception) { null }
-        }.toSet()
-        setEnabledDataTypes(dataTypes)
+        setEnabledDataTypes(export.enabledDataTypes.toSet())
 
         val mode = try { SyncMode.valueOf(export.syncMode) } catch (e: Exception) { SyncMode.INTERVAL }
         setSyncMode(mode)

@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HC Webhook"
+rootProject.name = "US Webhook"
 include(":app")
