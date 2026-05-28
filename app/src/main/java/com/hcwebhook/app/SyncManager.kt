@@ -1,7 +1,6 @@
 package com.hcwebhook.app
 
 import android.content.Context
-import android.content.pm.PackageManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -10,14 +9,6 @@ import kotlinx.serialization.json.Json
 import java.time.Instant
 
 class SyncManager(private val context: Context) {
-
-    private val appVersionName: String by lazy {
-        try {
-            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
-        } catch (_: PackageManager.NameNotFoundException) {
-            "Unknown"
-        }
-    }
 
     private val preferencesManager = PreferencesManager(context)
     private val usageStatsDataManager = UsageStatsDataManager(context)
@@ -29,14 +20,17 @@ class SyncManager(private val context: Context) {
             }
 
             val usageMetrics = usageStatsDataManager.queryDailyUsageStats()
-            if (usageMetrics.isEmpty()) {
+            val usageEvents = usageStatsDataManager.queryUsageEvents(sinceTimestamp = null)
+
+            if (usageMetrics.isEmpty() && usageEvents.isEmpty()) {
                 return@withContext Result.failure(Exception("No usage data available"))
             }
 
             val payload = UsagePayload(
                 timestamp = Instant.now().toString(),
                 device_name = usageStatsDataManager.getDeviceName(),
-                usage_stats = usageMetrics
+                usage_stats = usageMetrics,
+                usage_events = usageEvents
             )
 
             val jsonPayload = Json.encodeToString(payload)
@@ -49,7 +43,11 @@ class SyncManager(private val context: Context) {
         }
     }
 
-    suspend fun performSync(syncType: String = "auto", targetWebhooks: List<WebhookConfig>? = null): Result<SyncResult> = withContext(Dispatchers.IO) {
+    suspend fun performSync(
+        syncType: String = "auto",
+        targetWebhooks: List<WebhookConfig>? = null,
+        sinceTimestamp: Long? = null
+    ): Result<SyncResult> = withContext(Dispatchers.IO) {
         try {
             val webhookConfigs = preferencesManager.getWebhookConfigs()
             val enabledWebhookConfigs = (targetWebhooks ?: webhookConfigs).filter { it.isEnabled }
@@ -63,9 +61,11 @@ class SyncManager(private val context: Context) {
                 return@withContext Result.failure(Exception("Usage stats permission not granted"))
             }
 
-            val usageMetrics = usageStatsDataManager.queryDailyUsageStats()
+            val effectiveStartTime = sinceTimestamp ?: preferencesManager.getLastSyncTime()
+            val usageMetrics = usageStatsDataManager.queryDailyUsageStats(startTime = effectiveStartTime)
+            val usageEvents = usageStatsDataManager.queryUsageEvents(sinceTimestamp = effectiveStartTime)
 
-            if (usageMetrics.isEmpty()) {
+            if (usageMetrics.isEmpty() && usageEvents.isEmpty()) {
                 preferencesManager.setLastSyncTime(Instant.now().toEpochMilli())
                 preferencesManager.setLastSyncSummary("No usage data")
                 return@withContext Result.success(SyncResult.NoData)
@@ -74,7 +74,8 @@ class SyncManager(private val context: Context) {
             val payload = UsagePayload(
                 timestamp = Instant.now().toString(),
                 device_name = usageStatsDataManager.getDeviceName(),
-                usage_stats = usageMetrics
+                usage_stats = usageMetrics,
+                usage_events = usageEvents
             )
 
             val jsonPayload = Json.encodeToString(payload)
@@ -133,7 +134,7 @@ class SyncManager(private val context: Context) {
                 }
             }
 
-            val summary = "${usageMetrics.size} apps · ${usageMetrics.sumOf { it.total_time_visible_seconds } / 3600}h total"
+            val summary = "${usageMetrics.size} apps · ${usageEvents.size} events · ${usageMetrics.sumOf { it.total_time_visible_seconds } / 3600}h total"
             preferencesManager.setLastSyncTime(Instant.now().toEpochMilli())
             preferencesManager.setLastSyncSummary(summary)
 

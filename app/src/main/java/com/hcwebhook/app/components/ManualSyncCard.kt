@@ -19,6 +19,13 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import androidx.compose.ui.res.stringResource
 import com.uswebhook.app.R
+import java.time.LocalDate
+import java.time.ZoneId
+
+private data class TimeRangeOption(
+    val label: String,
+    val resolveTimestamp: (lastSyncTime: Long?) -> Long?
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +44,30 @@ fun ManualSyncCard(onSyncCompleted: () -> Unit = {}) {
     val localTcpEnabled = preferencesManager.isLocalTcpEnabled()
     var selectedWebhookUrl by remember { mutableStateOf<String?>(null) }
 
+    val timeRangeOptions = remember {
+        listOf(
+            TimeRangeOption("New data (since last sync)") { lastSyncTime -> lastSyncTime },
+            TimeRangeOption("Today") { _ ->
+                LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            },
+            TimeRangeOption("Past 1 day") { _ ->
+                System.currentTimeMillis() - (1 * 24 * 60 * 60 * 1000L)
+            },
+            TimeRangeOption("Past 3 days") { _ ->
+                System.currentTimeMillis() - (3 * 24 * 60 * 60 * 1000L)
+            },
+            TimeRangeOption("Past 7 days") { _ ->
+                System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000L)
+            },
+            TimeRangeOption("Past 30 days") { _ ->
+                System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000L)
+            }
+        )
+    }
+
+    var selectedOptionIndex by remember { mutableStateOf(0) }
+    var expanded by remember { mutableStateOf(false) }
+
     if (showConfirmSheet) {
         ModalBottomSheet(
             onDismissRequest = { showConfirmSheet = false }
@@ -50,7 +81,7 @@ fun ManualSyncCard(onSyncCompleted: () -> Unit = {}) {
             ) {
                 Text(stringResource(R.string.manual_sync_confirm_title), style = MaterialTheme.typography.titleLarge)
                 Text(
-                    "Sync daily usage statistics to your configured webhooks.",
+                    "Sync usage statistics for the selected time range.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -118,7 +149,14 @@ fun ManualSyncCard(onSyncCompleted: () -> Unit = {}) {
                                     enabledWebhooks.filter { it.url == url }
                                 }
 
-                                val result = syncManager.performSync(syncType = "manual", targetWebhooks = targetWebhooks)
+                                val lastSyncTime = preferencesManager.getLastSyncTime()
+                                val sinceTimestamp = timeRangeOptions[selectedOptionIndex].resolveTimestamp(lastSyncTime)
+
+                                val result = syncManager.performSync(
+                                    syncType = "manual",
+                                    targetWebhooks = targetWebhooks,
+                                    sinceTimestamp = sinceTimestamp
+                                )
 
                                 when {
                                     result.isSuccess -> {
@@ -161,11 +199,35 @@ fun ManualSyncCard(onSyncCompleted: () -> Unit = {}) {
             Text(stringResource(R.string.manual_sync_title), style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.height(12.dp))
 
-            Text(
-                text = "Sync the last 24 hours of app usage data to your webhooks.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = timeRangeOptions[selectedOptionIndex].label,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Time Range") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    timeRangeOptions.forEachIndexed { index, option ->
+                        DropdownMenuItem(
+                            text = { Text(option.label) },
+                            onClick = {
+                                selectedOptionIndex = index
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
