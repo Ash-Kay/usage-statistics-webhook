@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.hcwebhook.app.PreferencesManager
-import com.hcwebhook.app.R
+import com.uswebhook.app.R
 import com.hcwebhook.app.SettingsExport
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString

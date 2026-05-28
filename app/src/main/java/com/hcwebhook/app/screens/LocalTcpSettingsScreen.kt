@@ -55,7 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.hcwebhook.app.LocalHttpServerService
 import com.hcwebhook.app.PreferencesManager
-import com.hcwebhook.app.R
+import com.uswebhook.app.R
 import java.net.Inet4Address
 import java.net.NetworkInterface
 

@@ -11,7 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.hcwebhook.app.BuildConfig
+import com.uswebhook.app.BuildConfig
 import com.hcwebhook.app.screens.AboutScreen
 import com.hcwebhook.app.screens.ChangelogScreen
 import com.hcwebhook.app.screens.ConfigurationScreen

@@ -8,7 +8,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 
-class HCWebhookApplication : Application() {
+class USWebhookApplication : Application() {
 
     private lateinit var preferencesManager: PreferencesManager
 

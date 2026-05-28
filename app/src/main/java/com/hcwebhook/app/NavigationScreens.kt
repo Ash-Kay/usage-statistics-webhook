@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Webhook
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.uswebhook.app.R
 
 sealed class NavigationScreen(val route: String, val titleResId: Int, val icon: ImageVector) {
     object Home : NavigationScreen("home", R.string.nav_home, Icons.Filled.Home)

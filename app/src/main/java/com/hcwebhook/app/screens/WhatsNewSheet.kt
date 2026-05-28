@@ -30,8 +30,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.hcwebhook.app.BuildConfig
-import com.hcwebhook.app.R
+import com.uswebhook.app.BuildConfig
+import com.uswebhook.app.R
 import com.hcwebhook.app.releases.GithubRelease
 import com.hcwebhook.app.releases.ReleaseArticle
 import com.hcwebhook.app.releases.ReleaseRepository

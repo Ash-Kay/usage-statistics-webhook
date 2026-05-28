@@ -13,7 +13,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,17 +23,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -47,10 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.hcwebhook.app.*
-import com.hcwebhook.app.ui.theme.*
-import kotlinx.coroutines.launch
 import java.util.Calendar
-import com.hcwebhook.app.R
+import com.uswebhook.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -291,12 +283,12 @@ fun ConfigurationScreen(
                     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                         SegmentedButton(
                             selected = syncMode == SyncMode.INTERVAL,
-                            onClick = { syncMode = SyncMode.INTERVAL; preferencesManager.setSyncMode(SyncMode.INTERVAL); (activity.application as? HCWebhookApplication)?.scheduleSyncWork() },
+                            onClick = { syncMode = SyncMode.INTERVAL; preferencesManager.setSyncMode(SyncMode.INTERVAL); (activity.application as? USWebhookApplication)?.scheduleSyncWork() },
                             shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2)
                         ) { Text(stringResource(R.string.config_sync_mode_interval)) }
                         SegmentedButton(
                             selected = syncMode == SyncMode.SCHEDULED,
-                            onClick = { syncMode = SyncMode.SCHEDULED; preferencesManager.setSyncMode(SyncMode.SCHEDULED); (activity.application as? HCWebhookApplication)?.cancelSyncWork(); ScheduledSyncManager(context).scheduleAllAlarms() },
+                            onClick = { syncMode = SyncMode.SCHEDULED; preferencesManager.setSyncMode(SyncMode.SCHEDULED); (activity.application as? USWebhookApplication)?.cancelSyncWork(); ScheduledSyncManager(context).scheduleAllAlarms() },
                             shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2)
                         ) { Text(stringResource(R.string.config_sync_mode_scheduled)) }
                     }
@@ -316,7 +308,7 @@ fun ConfigurationScreen(
                                     val interval = syncInterval.toIntOrNull()
                                     if (interval != null && interval >= 15) {
                                         preferencesManager.setSyncIntervalMinutes(interval)
-                                        (activity.application as? HCWebhookApplication)?.scheduleSyncWork()
+                                        (activity.application as? USWebhookApplication)?.scheduleSyncWork()
                                         Toast.makeText(context, context.getString(R.string.config_toast_interval_saved), Toast.LENGTH_SHORT).show()
                                     } else {
                                         Toast.makeText(context, context.getString(R.string.config_toast_min_interval), Toast.LENGTH_SHORT).show()

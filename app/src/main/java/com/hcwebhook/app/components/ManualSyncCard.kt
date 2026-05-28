@@ -18,7 +18,7 @@ import com.hcwebhook.app.WebhookConfig
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import androidx.compose.ui.res.stringResource
-import com.hcwebhook.app.R
+import com.uswebhook.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

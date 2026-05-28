@@ -11,11 +11,11 @@ val appVersionCode = (appVersionMajor * 10000) + (appVersionMinor * 100) + appVe
 val appVersionName = "$appVersionMajor.$appVersionMinor.$appVersionPatch"
 
 android {
-    namespace = "com.hcwebhook.app"
+    namespace = "com.uswebhook.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.hcwebhook.app"
+        applicationId = "com.uswebhook.app"
         minSdk = 26
         targetSdk = 35
         versionCode = appVersionCode

@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.hcwebhook.app.LocalHttpServerManager
 import com.hcwebhook.app.PreferencesManager
-import com.hcwebhook.app.R
+import com.uswebhook.app.R
 import com.hcwebhook.app.ServerRequestLog
 import com.hcwebhook.app.WebhookConfig
 import com.hcwebhook.app.WebhookLog

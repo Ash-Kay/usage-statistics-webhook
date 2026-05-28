@@ -30,7 +30,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.compose.material.icons.filled.Translate
 import com.hcwebhook.app.FlavorUtils
-import com.hcwebhook.app.R
+import com.uswebhook.app.R
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
