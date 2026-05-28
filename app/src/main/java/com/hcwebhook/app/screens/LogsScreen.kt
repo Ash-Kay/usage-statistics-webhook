@@ -3,7 +3,6 @@ package com.hcwebhook.app.screens
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -863,7 +862,8 @@ private fun LogDetailSheet(
     val scope = rememberCoroutineScope()
     val prettyPayload = remember(log.payload) {
         log.payload?.let {
-            try { prettyJson.encodeToString(Json.parseToJsonElement(it)) } catch (_: Exception) { it }
+            val formatted = try { prettyJson.encodeToString(Json.parseToJsonElement(it)) } catch (_: Exception) { it }
+            if (formatted.length > 50_000) formatted.take(50_000) + "\n… (truncated)" else formatted
         }
     }
 
@@ -1035,9 +1035,7 @@ private fun LogDetailSheet(
                     Text(
                         text = prettyPayload,
                         style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .horizontalScroll(rememberScrollState())
+                        modifier = Modifier.padding(12.dp)
                     )
                 }
             }
